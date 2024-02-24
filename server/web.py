@@ -1,8 +1,6 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import time
-import socket
-
-IP = socket.gethostbyname_ex(socket.gethostname())[-1][1]
+from constants import *
 
 class WebServer(BaseHTTPRequestHandler):
     def do_GET(self):
@@ -13,10 +11,10 @@ class WebServer(BaseHTTPRequestHandler):
         with open('index.html', 'rb') as file:
             self.wfile.write(file.read())
 
-def run_server(port=8000):
-    server_address = ('', port)
+def run_server():
+    server_address = ('', WEBSITE_PORT)
     httpd = HTTPServer(server_address, WebServer)
-    print(f"Server is running on http://{IP}:{port}/")
+    print(f"Server is running on http://{IP}:{WEBSITE_PORT}/")
 
     try:
         httpd.serve_forever()
