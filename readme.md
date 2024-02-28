@@ -8,7 +8,8 @@ Dit is mijn eindproject genaamd: "Intelligent Sensor Systems". Het project besta
 ## Voorbereiding
 
 ### Server (Windows)
-- Installeer eerst [mosquitto mqtt](https://mosquitto.org/download/)
+- Installeer [mosquitto mqtt](https://mosquitto.org/download/)
+- Kopieer het [mosquitto.conf](server/mosquitto.conf) bestand in de server map naar C:\Program Files\mosquitto
 - Installeer python
 - Installeer de benodigde python packages:
 ```powershell
