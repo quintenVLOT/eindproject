@@ -25,8 +25,16 @@ class DataBase:
         with self.conn:
             self.conn.execute(query)
 
-    def insert_reading(self, sensor_id, temperatuur, lucht_vochtigheid, lucht_druk, gas, x, y):
-        tijd = int(time.time())
+    def insert_reading(self, json):
+        gas = json['gas']
+        temperatuur = json['temperatuur']
+        sensor_id = json['sensor_id']
+        lucht_vochtigheid = json['luchtvochtigheid']
+        lucht_druk = json['luchtdruk']
+        x = json['x']
+        y = json['y']
+        tijd = json['tijd']
+        
         query = '''
             INSERT INTO sensor_data (sensor_id, temperatuur, lucht_vochtigheid, lucht_druk, gas, x, y, tijd)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?)
@@ -50,8 +58,3 @@ class DataBase:
     def close_connection(self):
         self.conn.close()
         
-def test():
-    database = DataBase()
-    database.insert_reading("s1",23.5,48.2,20.2,50.2,8.1,9.1)
-    
-test()

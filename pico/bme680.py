@@ -40,3 +40,4 @@ class Sensor():
 
     def get_sensor_data(self):
         return Meeting(self.bme,self.x,self.y).toJson()
+

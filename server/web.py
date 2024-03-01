@@ -1,6 +1,9 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import time
 from constants import *
+from database import DataBase
+
+database = DataBase()
 
 class WebServer(BaseHTTPRequestHandler):
     def do_GET(self):
@@ -14,8 +17,8 @@ class WebServer(BaseHTTPRequestHandler):
 def run_server():
     server_address = ('', WEBSITE_PORT)
     httpd = HTTPServer(server_address, WebServer)
-    print(f"Server is running on http://{IP}:{WEBSITE_PORT}/")
-
+    print(f"[SERVER] Server is running on http://{IP}:{WEBSITE_PORT}/")
+        
     try:
         httpd.serve_forever()
     except KeyboardInterrupt:

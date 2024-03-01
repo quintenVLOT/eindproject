@@ -2,13 +2,14 @@ import time
 from wifi import connect_wifi
 from mqtt import connect_mqtt, publish_meeting
 from bme680 import Sensor
+from led import LED
 
 # wifi
 wifi_ssid = "bokkie"
 wifi_password = "papabokkie"
 
 # mqtt
-mqtt_client_id = "A103S1"
+mqtt_client_id = "A103S2"
 mqtt_server = "10.16.0.12"
 mqtt_port = 1884
 mqtt_topic = "A103/picos"
@@ -26,3 +27,5 @@ def main():
         time.sleep(1)
 
 main()
+
+
