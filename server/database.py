@@ -5,7 +5,7 @@ import json
 class DataBase:
     def __init__(self, db_file='metingen.db'):
         self.db_file = db_file
-        self.conn = sqlite3.connect(db_file)
+        self.conn = sqlite3.connect(db_file, check_same_thread=False)
         self.create_table()
 
     def create_table(self):
@@ -42,18 +42,18 @@ class DataBase:
         with self.conn:
             self.conn.execute(query, (sensor_id, temperatuur, lucht_vochtigheid, lucht_druk, gas, x, y, tijd))
 
-    def get_all_readings(self):
+    def get_readings(self, aantal):
         readings = []
         
-        query = 'SELECT * FROM sensor_data'
+        query = f'SELECT * FROM sensor_data ORDER BY id DESC LIMIT {aantal}'
         with self.conn:
             cursor = self.conn.execute(query)
             r = cursor.fetchall()
             for reading in r:
                 x = {"id": reading[1], "temperatuur": reading[2], "lucht_vochtigheid": reading[3], "lucht_druk": reading[4], "gas": reading[5], "x": reading[6], "y": reading[7], "tijd": reading[8]}
-                readings.append(json.dumps(x))
+                readings.append(x)
         
-        return readings
+        return json.dumps(readings)
             
     def close_connection(self):
         self.conn.close()

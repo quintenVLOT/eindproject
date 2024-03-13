@@ -7,12 +7,22 @@ database = DataBase()
 
 class WebServer(BaseHTTPRequestHandler):
     def do_GET(self):
-        self.send_response(200)
-        self.send_header('Content-type', 'text/html')
-        self.end_headers()
+        if self.path == '/api/waarde':
+            self.do_meetingen()
+        else:
+            self.send_response(200)
+            self.send_header('Content-type', 'text/html')
+            self.end_headers()
 
-        with open('index.html', 'rb') as file:
-            self.wfile.write(file.read())
+            with open('index.html', 'rb') as file:
+                self.wfile.write(file.read())
+            
+    def do_meetingen(self):
+        meetingen = database.get_readings(100)
+        self.send_response(200)
+        self.send_header('Content-type', 'application/json')
+        self.end_headers()
+        self.wfile.write(meetingen.encode())
 
 def run_server():
     server_address = ('', WEBSITE_PORT)
@@ -25,3 +35,4 @@ def run_server():
         pass
 
     httpd.server_close()
+    

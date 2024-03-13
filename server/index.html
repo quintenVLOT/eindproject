@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" sizes="192x192"  href="https://vlot.be/wp-content/themes/vlot/images/favicon/android-icon-192x192.png">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
     <title>Eindproject</title>
     <style>
         body {
@@ -34,6 +35,14 @@
         .content {
             padding-left: 1vw;
         }
+        
+        .meetGrid {
+            display:grid;
+            grid-template-columns: 700px 700px;
+            grid-row: auto auto;
+            grid-column-gap: 20px;
+            grid-row-gap: 20px;
+        }
     </style>
 </head>
 <body>
@@ -43,8 +52,194 @@
     </header>
     <div class="content">
         <h1>Vlot! Eindproject</h1>
-        <p>Door De Heer Van Damme</p>
+        <div class="meetGrid">
+        <canvas id="tempS1" style="width:100%;max-width:700px"></canvas>
+        <canvas id="drukS1" style="width:100%;max-width:700px"></canvas>
+        <canvas id="vochtS1" style="width:100%;max-width:700px"></canvas>
+        <canvas id="gasS1" style="width:100%;max-width:700px"></canvas>
+        </div>
     </div>
    
 </body>
+<script>
+
+function convertTimeStringToDate(timestring)
+{
+    // Create a new JavaScript Date object based on the timestamp
+    // multiplied by 1000 so that the argument is in milliseconds, not seconds
+    var date = new Date(timestring * 1000);
+
+    // Hours part from the timestamp
+    var hours = date.getHours();
+
+    // Minutes part from the timestamp
+    var minutes = "0" + date.getMinutes();
+
+    // Seconds part from the timestamp
+    var seconds = "0" + date.getSeconds();
+    var formattedTime = hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
+    
+    return timestring;
+}
+
+async function getWaarde() {
+    let response = await fetch('/api/waarde');
+    let json = await response.json();
+    return json;
+}
+
+async function main()
+{
+    let tempWaarden = [];
+    let drukWaarden = [];
+    let vochtWaarden = [];
+    let gasWaarden = [];
+    let tijdWaarden = [];
+    
+    const waarde = await getWaarde();
+    
+    for (let i = waarde.length - 1; i > 0; i--)
+    {
+        tempWaarden.push(waarde[i]['temperatuur'])
+        drukWaarden.push(waarde[i]['lucht_druk'])
+        vochtWaarden.push(waarde[i]['lucht_vochtigheid'])
+        gasWaarden.push(waarde[i]['gas'])
+        tijdWaarden.push(convertTimeStringToDate(waarde[i]['tijd']))
+    }
+    
+    new Chart("tempS1", {
+      type: "line",
+      data: {
+        labels: tijdWaarden,
+        datasets: [{
+          fill: false,
+          lineTension: 0,
+          backgroundColor: "rgba(255,51,1,1.0)",
+          borderColor: "rgba(255,0,0,0)",
+          data: tempWaarden
+        }]
+      },
+      options: {
+        legend: {display: false},
+        title: {
+          display: true,
+          text: "Sensor 1 Temperatuur"
+        },
+        animation: {
+            duration: 0
+        },
+        scales: {
+          yAxes: [{
+            ticks: {
+              callback: (val) => {
+                return val + '°C';
+              },
+            },
+          }],
+        }
+      }
+    });
+    
+    new Chart("drukS1", {
+      type: "line",
+      data: {
+        labels: tijdWaarden,
+        datasets: [{
+          fill: false,
+          lineTension: 0,
+          backgroundColor: "rgba(43,140,190,1.0)",
+          borderColor: "rgba(0,0,255,0)",
+          data: drukWaarden
+        }]
+      },
+      options: {
+        legend: {display: false},
+        title: {
+          display: true,
+          text: "Sensor 1 Luchtdruk"
+        },
+        animation: {
+            duration: 0
+        },
+        scales: {
+          yAxes: [{
+            ticks: {
+              callback: (val) => {
+                return val + 'Hpa';
+              },
+            },
+          }],
+        }
+      }
+    });
+    
+    new Chart("vochtS1", {
+      type: "line",
+      data: {
+        labels: tijdWaarden,
+        datasets: [{
+          fill: false,
+          lineTension: 0,
+          backgroundColor: "rgba(254,153,20,1.0)",
+          borderColor: "rgba(0,0,255,0)",
+          data: vochtWaarden
+        }]
+      },
+      options: {
+        legend: {display: false},
+        title: {
+          display: true,
+          text: "Sensor 1 Luchtvochtigheid"
+        },
+        animation: {
+            duration: 0
+        },
+        scales: {
+          yAxes: [{
+            ticks: {
+              callback: (val) => {
+                return val + '%';
+              },
+            },
+          }],
+        }
+      }
+    });
+    
+    new Chart("gasS1", {
+      type: "line",
+      data: {
+        labels: tijdWaarden,
+        datasets: [{
+          fill: false,
+          lineTension: 0,
+          backgroundColor: "rgba(128,196,28,1.0)",
+          borderColor: "rgba(0,0,255,0)",
+          data: gasWaarden
+        }]
+      },
+      options: {
+        legend: {display: false},
+        title: {
+          display: true,
+          text: "Sensor 1 Gas"
+        },
+        animation: {
+            duration: 0
+        },
+        scales: {
+          yAxes: [{
+            ticks: {
+              callback: (val) => {
+                return val + 'Kohm';
+              },
+            },
+          }],
+        }
+      }
+    });
+}
+
+setInterval(main, 1000);
+</script>
 </html>
