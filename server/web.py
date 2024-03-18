@@ -1,5 +1,6 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import time
+import re
 from constants import *
 from database import DataBase
 
@@ -7,8 +8,12 @@ database = DataBase()
 
 class WebServer(BaseHTTPRequestHandler):
     def do_GET(self):
-        if self.path == '/api/waarde':
-            self.do_meetingen()
+        if re.search('/api/waarde/*',self.path):
+            sensor_id = self.path.split('/')[-1]
+            self.do_meetingen(sensor_id)
+            
+        elif re.search('/api/clear',self.path):
+            self.clear()
         else:
             self.send_response(200)
             self.send_header('Content-type', 'text/html')
@@ -17,12 +22,17 @@ class WebServer(BaseHTTPRequestHandler):
             with open('index.html', 'rb') as file:
                 self.wfile.write(file.read())
             
-    def do_meetingen(self):
-        meetingen = database.get_readings(100)
+    def do_meetingen(self,sensor_id):
+        meetingen = database.get_readings(20,sensor_id)
         self.send_response(200)
         self.send_header('Content-type', 'application/json')
         self.end_headers()
         self.wfile.write(meetingen.encode())
+        
+    def clear(self):
+        database.clear()
+        meetingen = database.get_readings(20,sensor_id)
+        self.send_response(200)
 
 def run_server():
     server_address = ('', WEBSITE_PORT)

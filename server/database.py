@@ -42,18 +42,33 @@ class DataBase:
         with self.conn:
             self.conn.execute(query, (sensor_id, temperatuur, lucht_vochtigheid, lucht_druk, gas, x, y, tijd))
 
-    def get_readings(self, aantal):
+    def get_readings(self, aantal,sensor_id):
         readings = []
-        
-        query = f'SELECT * FROM sensor_data ORDER BY id DESC LIMIT {aantal}'
+
+        query = f'SELECT * FROM sensor_data WHERE sensor_id == ? ORDER BY id DESC LIMIT ?'
         with self.conn:
-            cursor = self.conn.execute(query)
+            cursor = self.conn.execute(query, (sensor_id, aantal))
             r = cursor.fetchall()
             for reading in r:
-                x = {"id": reading[1], "temperatuur": reading[2], "lucht_vochtigheid": reading[3], "lucht_druk": reading[4], "gas": reading[5], "x": reading[6], "y": reading[7], "tijd": reading[8]}
+                x = {
+                    "sensor_id": reading[1],
+                    "temperatuur": reading[2],
+                    "lucht_vochtigheid": reading[3],
+                    "lucht_druk": reading[4],
+                    "gas": reading[5],
+                    "x": reading[6],
+                    "y": reading[7],
+                    "tijd": reading[8]
+                }
                 readings.append(x)
-        
+
         return json.dumps(readings)
+    
+    def clear(self):
+        query = '''delete from sensor_data'''
+        
+        with self.conn:
+            self.conn.execute(query)        
             
     def close_connection(self):
         self.conn.close()

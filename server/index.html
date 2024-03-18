@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" sizes="192x192"  href="https://vlot.be/wp-content/themes/vlot/images/favicon/android-icon-192x192.png">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
     <title>Eindproject</title>
     <style>
@@ -31,9 +32,24 @@
             margin-bottom: 1vh;
             margin-left: 7vw;
         }
-       
+        
+        header button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 0.5rem;
+            float: right;
+            margin-top: 1.4rem;
+        }
+        
+        header button:hover {
+            background: #d5d5d5;
+        }
+               
         .content {
-            padding-left: 1vw;
+            margin-left: 1vw;
+            margin-right: 1vw;
         }
         
         .meetGrid {
@@ -43,21 +59,127 @@
             grid-column-gap: 20px;
             grid-row-gap: 20px;
         }
+        
+        .tabs {
+          display: flex;
+          flex-wrap: wrap;
+        }
+        .tabs > section {  
+          order: 999;
+          width: 100%;
+          display: none;
+        }
+        .tabs > input {
+          /* display: none; Don’t use display:none. Bad for accessibility */
+          
+          /* Step 6: Hide the radio inputs */
+          opacity: 0;
+          
+          /* Step 7: Make sure the radio inputs don’t take up space in layout */
+          position: absolute;
+        }
+        /* Step 8: Select the label right next to the selected input */
+        .tabs > input[type=radio]:checked + label {
+          /* Step 9: Highlight the selected label */
+          background: yellow;
+        }
+        /* Step 10: Select the section right next to the label which is next to the selected input */
+        .tabs > input[type=radio]:checked + label + section {
+          /* Step 11: Unset the 'display:none' we did in step 5 */
+          display: unset;
+        }
+
+        /* Done. Make sure to disable the debug code at the beginning of CSS. And now it is time to make the tabs look good */
+
+        /* Make the tabs look good */
+        /* Final Step: Make the tabs pretty with padding and colors */
+
+        .tabs > label {
+          padding: .5em 1em;
+          background: #d5d5d5;
+          border-radius: 0.8rem;
+          margin-bottom: 0.5rem;
+          margin-right: 0.5rem;
+          border-right: 1px solid #efefef;
+          cursor: pointer;
+        }
+        .tabs > label:last-of-type {
+          border-right: none;
+        }
+        .tabs > input[type=radio]:checked + label {
+          background: #efefef;
+        } 
+
+        .tabs section {
+          border-radius: 0.8rem;
+          border: 1px #efefef solid;
+          border-top: 5px #efefef solid;
+          padding: 1em;
+        }
+
+		#settingsBar {
+			width: 100vw;
+			height: 50px;
+			left: 0;
+            background-color: #fff;
+            border-bottom: 1px solid #efefef;
+			padding: 10px;
+		}
+		
+		#settingsBar div {
+			display: flex;
+			margin-right: 5px;
+			width: fit-content;
+			height: 100%;
+			
+		}
+
     </style>
 </head>
 <body>
 
     <header>
         <img src="https://vlot.be/wp-content/themes/vlot/images/svg/vlot_logo.svg" alt="Logo">
+        <button onclick="toggleSettings()"><span class="material-symbols-outlined" style="font-size: 28px;">settings</span></button>
     </header>
+	<div id="settingsBar" style="display:none;">
+		<div><button id="clearButton">Clear Database</button></div>
+	</div>
     <div class="content">
-        <h1>Vlot! Eindproject</h1>
-        <div class="meetGrid">
-        <canvas id="tempS1" style="width:100%;max-width:700px"></canvas>
-        <canvas id="drukS1" style="width:100%;max-width:700px"></canvas>
-        <canvas id="vochtS1" style="width:100%;max-width:700px"></canvas>
-        <canvas id="gasS1" style="width:100%;max-width:700px"></canvas>
-        </div>
+        <h1>Dashboard</h1>
+        <div class='tabs'>          
+          <input type="radio" name="tab" id="S1" role="tab" checked>
+          <label for="S1" id="S1-label">Sensor1</label>
+          <section aria-labelledby="tab1-label">
+            <div class="meetGrid">
+            <canvas id="tempS1" style="width:100%;max-width:700px"></canvas>
+            <canvas id="drukS1" style="width:100%;max-width:700px"></canvas>
+            <canvas id="vochtS1" style="width:100%;max-width:700px"></canvas>
+            <canvas id="gasS1" style="width:100%;max-width:700px"></canvas>
+            </div>
+          </section>
+          
+          <input type="radio" name="tab" id="S2" role="tab">
+          <label for="S2" id="S2-label">Sensor 2</label>
+          <section aria-labelledby="tab2-label">
+            <div class="meetGrid">
+            <canvas id="tempS2" style="width:100%;max-width:700px"></canvas>
+            <canvas id="drukS2" style="width:100%;max-width:700px"></canvas>
+            <canvas id="vochtS2" style="width:100%;max-width:700px"></canvas>
+            <canvas id="gasS2" style="width:100%;max-width:700px"></canvas>
+            </div>
+          </section>
+          
+          <input type="radio" name="tab" id="S3" role="tab">
+          <label for="S3" id="S3-label">Sensor 3</label>
+          <section aria-labelledby="tab2-label">
+            <div class="meetGrid">
+            <canvas id="tempS3" style="width:100%;max-width:700px"></canvas>
+            <canvas id="drukS3" style="width:100%;max-width:700px"></canvas>
+            <canvas id="vochtS3" style="width:100%;max-width:700px"></canvas>
+            <canvas id="gasS3" style="width:100%;max-width:700px"></canvas>
+            </div>
+          </section>
     </div>
    
 </body>
@@ -79,16 +201,16 @@ function convertTimeStringToDate(timestring)
     var seconds = "0" + date.getSeconds();
     var formattedTime = hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
     
-    return timestring;
+    return formattedTime;
 }
 
-async function getWaarde() {
-    let response = await fetch('/api/waarde');
+async function getWaarde(sensor_id) {
+    let response = await fetch('/api/waarde/' + sensor_id);
     let json = await response.json();
     return json;
 }
 
-async function main()
+async function updateChart(id,charts)
 {
     let tempWaarden = [];
     let drukWaarden = [];
@@ -96,7 +218,7 @@ async function main()
     let gasWaarden = [];
     let tijdWaarden = [];
     
-    const waarde = await getWaarde();
+    const waarde = await getWaarde('A103S' + id);
     
     for (let i = waarde.length - 1; i > 0; i--)
     {
@@ -107,23 +229,43 @@ async function main()
         tijdWaarden.push(convertTimeStringToDate(waarde[i]['tijd']))
     }
     
-    new Chart("tempS1", {
+    for (let i = 0; i < charts.length; i++)
+    {
+        charts[i].data.labels = tijdWaarden; 
+    }
+    
+    charts[0].data.datasets[0].data = tempWaarden;
+    charts[1].data.datasets[0].data = drukWaarden;
+    charts[2].data.datasets[0].data = vochtWaarden;
+    charts[3].data.datasets[0].data = gasWaarden;
+    
+    for (let i = 0; i < charts.length; i++)
+    {
+        charts[i].update(); 
+    }
+}
+
+function initChart(id)
+{
+    let charts = [];
+
+    let temp = new Chart("tempS" + id, {
       type: "line",
       data: {
-        labels: tijdWaarden,
+        labels: [],
         datasets: [{
           fill: false,
           lineTension: 0,
           backgroundColor: "rgba(255,51,1,1.0)",
           borderColor: "rgba(255,0,0,0)",
-          data: tempWaarden
+          data: []
         }]
       },
       options: {
         legend: {display: false},
         title: {
           display: true,
-          text: "Sensor 1 Temperatuur"
+          text: "Sensor " + id + " Temperatuur"
         },
         animation: {
             duration: 0
@@ -140,23 +282,23 @@ async function main()
       }
     });
     
-    new Chart("drukS1", {
+    let druk = new Chart("drukS" + id, {
       type: "line",
       data: {
-        labels: tijdWaarden,
+        labels: [],
         datasets: [{
           fill: false,
           lineTension: 0,
           backgroundColor: "rgba(43,140,190,1.0)",
           borderColor: "rgba(0,0,255,0)",
-          data: drukWaarden
+          data: []
         }]
       },
       options: {
         legend: {display: false},
         title: {
           display: true,
-          text: "Sensor 1 Luchtdruk"
+          text: "Sensor " + id + " Luchtdruk"
         },
         animation: {
             duration: 0
@@ -173,23 +315,23 @@ async function main()
       }
     });
     
-    new Chart("vochtS1", {
+    let vocht = new Chart("vochtS" + id, {
       type: "line",
       data: {
-        labels: tijdWaarden,
+        labels: [],
         datasets: [{
           fill: false,
           lineTension: 0,
           backgroundColor: "rgba(254,153,20,1.0)",
           borderColor: "rgba(0,0,255,0)",
-          data: vochtWaarden
+          data: []
         }]
       },
       options: {
         legend: {display: false},
         title: {
           display: true,
-          text: "Sensor 1 Luchtvochtigheid"
+          text: "Sensor " + id + " Luchtvochtigheid"
         },
         animation: {
             duration: 0
@@ -206,23 +348,23 @@ async function main()
       }
     });
     
-    new Chart("gasS1", {
+    let gas = new Chart("gasS" + id, {
       type: "line",
       data: {
-        labels: tijdWaarden,
+        labels: [],
         datasets: [{
           fill: false,
           lineTension: 0,
           backgroundColor: "rgba(128,196,28,1.0)",
           borderColor: "rgba(0,0,255,0)",
-          data: gasWaarden
+          data: []
         }]
       },
       options: {
         legend: {display: false},
         title: {
           display: true,
-          text: "Sensor 1 Gas"
+          text: "Sensor " + id + " Gas"
         },
         animation: {
             duration: 0
@@ -238,8 +380,38 @@ async function main()
         }
       }
     });
+    
+    charts.push(temp)
+    charts.push(druk)
+    charts.push(vocht)
+    charts.push(gas)
+    
+    return charts;
 }
 
-setInterval(main, 1000);
+function toggleSettings() {
+	settingsBar = document.getElementById('settingsBar');
+	
+	if (settingsBar.style.display == "block")
+	{
+		settingsBar.style.display = "none";
+	} else {
+		settingsBar.style.display = "block";
+	}
+}
+
+document.getElementById("clearButton").onclick=async() => {
+  await clear();
+};
+
+async function clear() {
+    await fetch('/api/clear');
+}
+
+chartS1 = initChart(1)
+chartS3 = initChart(3)
+
+setInterval(updateChart, 1000,1,chartS1);
+setInterval(updateChart, 1000,3,chartS3);
 </script>
 </html>
