@@ -48,6 +48,7 @@
         }
                
         .content {
+			z-index: 1;
             margin-left: 1vw;
             margin-right: 1vw;
         }
@@ -131,9 +132,69 @@
 			margin-right: 5px;
 			width: fit-content;
 			height: 100%;
-			
+			gap: 10px;
+		}
+		
+		#settingsBar button {
+			border: none;
+			background: #d5d5d5;
+			color: #000;
+			cursor: pointer;
+			padding: 5px 10px;
+			border-radius: 0.5rem;
+			font-size: 16px;
 		}
 
+		#settingsBar button:hover {
+			background: #efefef;
+		}
+		
+		#settingsBar button:first-of-type {
+			margin-left: 20px;
+		}
+		
+		#prompt-wrapper
+		{
+			display: flex;
+			z-index: 4;
+			position: absolute;
+			top: 0;
+			left: 0;
+			min-width: 100vw;
+			min-height: 100vh;
+			background: #d5d5d50a;
+			backdrop-filter: blur(5px);
+			align-content: center;
+			justify-content: center;
+			padding: 10px;
+		}
+		
+		#prompt {
+			display: flex;
+			margin-top: auto;
+			margin-bottom: auto;
+			width: 20vw;
+			height: 30vh;
+			background: #d5d5d5;
+			border-radius: 0.5rem;
+			align-content: center;
+			justify-content: center;
+			flex-direction: column;
+			padding: 15px;
+		}
+
+		#prompt h1 {
+			text-align: center;
+		}
+
+		#prompt button {
+			width: fit-content;
+			display: flex;
+			margin-top: auto;
+			margin-left: auto;
+			padding: 5px 10px;
+		}
+		
     </style>
 </head>
 <body>
@@ -143,7 +204,10 @@
         <button onclick="toggleSettings()"><span class="material-symbols-outlined" style="font-size: 28px;">settings</span></button>
     </header>
 	<div id="settingsBar" style="display:none;">
-		<div><button id="clearButton">Clear Database</button></div>
+		<div>
+			<button id="clearButton">Clear Database</button>
+			<button id="kalibreer">Kalibreer</button>
+		</div>
 	</div>
     <div class="content">
         <h1>Dashboard</h1>
@@ -181,7 +245,11 @@
             </div>
           </section>
     </div>
-   
+	</div>
+	<div id="prompt-wrapper" style="display:none;">
+		<div id="prompt">
+		</div>
+	</div>
 </body>
 <script>
 
@@ -404,14 +472,57 @@ document.getElementById("clearButton").onclick=async() => {
   await clear();
 };
 
+document.getElementById("kalibreer").onclick=async() => {
+  kalibreer();
+};
+
 async function clear() {
-    await fetch('/api/clear');
+    try
+	{
+	await fetch('/api/clear');
+	} catch (e){}
+	prompt = document.getElementById("prompt")
+	prompt.innerHTML = "<h1>Database is gereset!</h1><button onclick='closePrompt()'>OK</button>"
+	
+	togglePrompt()
+}
+
+async function kalibreer() {
+	prompt = document.getElementById("prompt")
+	prompt.innerHTML = '<h1>Kalibreer</h1><div><label for="sensor">Kies een sensor:</label><select name="sensor" id="sensor-select"><option value="sensor1">Sensor 1</option><option value="sensor3">Sensor 3</option></select></div><div><label for="meeting">Kies een meeting:</label><select name="meeting" id="meeting-select"><option value="temperatuur">Temperatuur</option><option value="luchtdruk">Luchtdruk</option><option value="luchtvochtigheid">Luchtvochtigheid</option><option value="gas">Gas</option></select></div><p>Geef een waarde in dat van de sensor moet worden afgetrokken.</p><div><input type="number" value="0" min="-20" max="20" /></div><button onclick="closePrompt()">OK</button>'
+	
+	togglePrompt()
+}
+
+function togglePrompt() {
+	wrapper = document.getElementById("prompt-wrapper")
+	
+	if (wrapper.style.display == "flex")
+	{
+		wrapper.style.display = "none";
+	} else {
+		wrapper.style.display = "flex";
+	}
+}
+
+function closePrompt()
+{
+	wrapper = document.getElementById("prompt-wrapper")
+	wrapper.style.display = "none";
+	clearPrompt();
+}
+
+
+function clearPrompt()
+{
+	prompt = document.getElementById("prompt")
+	prompt.innerHTML = '';
 }
 
 chartS1 = initChart(1)
 chartS3 = initChart(3)
 
 setInterval(updateChart, 1000,1,chartS1);
-setInterval(updateChart, 1000,3,chartS3);
+setInterval(updateChart, 1000,3,chartS3); 
 </script>
 </html>

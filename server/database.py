@@ -6,9 +6,10 @@ class DataBase:
     def __init__(self, db_file='metingen.db'):
         self.db_file = db_file
         self.conn = sqlite3.connect(db_file, check_same_thread=False)
-        self.create_table()
+        self.create_meetingen_table()
+        self.create_kalibreer_table()
 
-    def create_table(self):
+    def create_meetingen_table(self):
         query = '''
             CREATE TABLE IF NOT EXISTS sensor_data (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -24,6 +25,18 @@ class DataBase:
         '''
         with self.conn:
             self.conn.execute(query)
+            
+    def create_kalibreer_table(self):
+        query = '''
+            CREATE TABLE IF NOT EXISTS kalibratie_data (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                sensor_id TEXT,
+                waarde REAL
+            )
+        '''
+        with self.conn:
+            self.conn.execute(query)
+
 
     def insert_reading(self, json):
         gas = json['gas']
@@ -41,6 +54,29 @@ class DataBase:
         '''
         with self.conn:
             self.conn.execute(query, (sensor_id, temperatuur, lucht_vochtigheid, lucht_druk, gas, x, y, tijd))
+
+    def insert_kalibratie(self, json):
+        sensor_id = json['sensor_id']
+        waarde = json['waarde']
+        
+        # Controleren of een item met hetzelfde sensor_id al in de database staat
+        existing_query = '''
+            SELECT COUNT(*) FROM kalibratie_data WHERE sensor_id = ?
+        '''
+        with self.conn:
+            existing_count = self.conn.execute(existing_query, (sensor_id,)).fetchone()[0]
+            if existing_count > 0:
+                # Overschrijven van de waarde als het item al bestaat
+                update_query = '''
+                    UPDATE kalibratie_data SET waarde = ? WHERE sensor_id = ?
+                '''
+                self.conn.execute(update_query, (waarde, sensor_id))
+            else:
+                # Toevoegen van een nieuw item als het item niet bestaat
+                insert_query = '''
+                    INSERT INTO kalibratie_data (sensor_id, waarde) VALUES (?, ?)
+                '''
+                self.conn.execute(insert_query, (sensor_id, waarde))
 
     def get_readings(self, aantal,sensor_id):
         readings = []
@@ -63,8 +99,23 @@ class DataBase:
                 readings.append(x)
 
         return json.dumps(readings)
+
+    def get_kalibratie(self, sensor_id):
+        query = '''
+            SELECT waarde FROM kalibratie_data WHERE sensor_id = ?
+        '''
+        with self.conn:
+            result = self.conn.execute(query, (sensor_id,)).fetchone()
+            if result:
+                # Gegevens gevonden voor de sensor_id
+                waarde = result[0]
+                return json.dumps({'sensor_id': sensor_id, 'waarde': waarde})
+            else:
+                # Geen gegevens gevonden voor de sensor_id
+                return {}
+
     
-    def clear(self):
+    def clear_meetingen(self):
         query = '''delete from sensor_data'''
         
         with self.conn:

@@ -12,6 +12,10 @@ class WebServer(BaseHTTPRequestHandler):
             sensor_id = self.path.split('/')[-1]
             self.do_meetingen(sensor_id)
             
+        elif re.search('/api/kalibratie/*',self.path):
+            sensor_id = self.path.split('/')[-1]
+            self.get_kalibratie(sensor_id)
+            
         elif re.search('/api/clear',self.path):
             self.clear()
         else:
@@ -29,8 +33,15 @@ class WebServer(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(meetingen.encode())
         
+    def get_kalibratie(self,sensor_id):
+        kalibratie = database.get_kalibratie(sensor_id)
+        self.send_response(200)
+        self.send_header('Content-type', 'application/json')
+        self.end_headers()
+        self.wfile.write(kalibratie.encode())        
+        
     def clear(self):
-        database.clear()
+        database.clear_meetingen()
         meetingen = database.get_readings(20,sensor_id)
         self.send_response(200)
 
