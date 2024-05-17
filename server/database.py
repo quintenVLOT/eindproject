@@ -31,7 +31,10 @@ class DataBase:
             CREATE TABLE IF NOT EXISTS kalibratie_data (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 sensor_id TEXT,
-                waarde REAL
+                temperatuur REAL
+                lucht_vochtigheid REAL,
+                lucht_druk REAL,
+                gas REAL
             )
         '''
         with self.conn:
@@ -57,7 +60,10 @@ class DataBase:
 
     def insert_kalibratie(self, json):
         sensor_id = json['sensor_id']
-        waarde = json['waarde']
+        temperatuur = json['temperatuur']
+        sensor_id = json['sensor_id']
+        lucht_vochtigheid = json['luchtvochtigheid']
+        lucht_druk = json['luchtdruk']
         
         # Controleren of een item met hetzelfde sensor_id al in de database staat
         existing_query = '''
@@ -102,24 +108,42 @@ class DataBase:
 
     def get_kalibratie(self, sensor_id):
         query = '''
-            SELECT waarde FROM kalibratie_data WHERE sensor_id = ?
+            SELECT * FROM kalibratie_data WHERE sensor_id = ?
         '''
         with self.conn:
-            result = self.conn.execute(query, (sensor_id,)).fetchone()
+            result = self.conn.execute(query, (sensor_id)).fetchone()
             if result:
                 # Gegevens gevonden voor de sensor_id
-                waarde = result[0]
-                return json.dumps({'sensor_id': sensor_id, 'waarde': waarde})
+                x = {
+                    "sensor_id": reading[1],
+                    "temperatuur": reading[2],
+                    "lucht_vochtigheid": reading[3],
+                    "lucht_druk": reading[4],
+                    "gas": reading[5],
+                }
+                return json.dumps(x)
             else:
                 # Geen gegevens gevonden voor de sensor_id
-                return {}
-
+                x = {
+                    "sensor_id": sensor_id,
+                    "temperatuur": 0,
+                    "lucht_vochtigheid": 0,
+                    "lucht_druk": 0,
+                    "gas": 0,
+                }
+                return json.dumps(x)
     
     def clear_meetingen(self):
         query = '''delete from sensor_data'''
         
         with self.conn:
-            self.conn.execute(query)        
+            self.conn.execute(query)
+            
+    def clear_kalibratie(self):
+        query = '''delete from kalibratie_data'''
+        
+        with self.conn:
+            self.conn.execute(query)      
             
     def close_connection(self):
         self.conn.close()
