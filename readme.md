@@ -62,10 +62,10 @@ python main.py
 ---
 title: sensor wifi.py
 ---
-flowchart TD 
-    A[connect_wifi] --> B(wifi activeren) 
-    B --> C(wlan.connect)
-    C --> D{wlan.isconnected}
+flowchart TD
+    A[connect_wifi] --> B(wifi activeren) 
+    B --> C(wlan.connect)
+    C --> D{wlan.isconnected}
     D -->|False| E(wacht 5 seconden) --> D
     D -->|True| F[return]
 ```
@@ -84,9 +84,9 @@ flowchart TD
 title: sensor mqqt.py
 ---
 flowchart TD 
-    A[connect_mqtt] --> B(client aanmaken) 
-    B --> C(client.connect)
-    C --> D(connected = True)
+    A[connect_mqtt] --> B(client aanmaken) 
+    B --> C(client.connect)
+    C --> D(connected = True)
     D{connected == True} -->|False| E(wacht 5 seconden) --> C
     D -->|True| F[return client]
 ```
@@ -103,8 +103,8 @@ flowchart TD
 title: sensor mqqt.py
 ---
 flowchart TD 
-    A[publish_meeting] --> B(client.publish) 
-    B --> C[return]
+    A[publish_meeting] --> B(client.publish) 
+    B --> C[return]
 ```
 
 ### sensor bme680.py
@@ -159,9 +159,9 @@ classDiagram
 title: sensor main.py
 ---
 flowchart TD 
-    A[main] --> B(connect_wifi) 
-    B --> C(connect_mqtt)
-    C --> D(Initializeer sensor)
+    A[main] --> B(connect_wifi) 
+    B --> C(connect_mqtt)
+    C --> D(Initializeer sensor)
     D{True} --> E(sensor.get_sensor_data)
     E --> F(publish_meeting)
     F --> G[wacht 1 seconde] --> D
@@ -191,8 +191,8 @@ classDiagram
 title: server mqtt.py
 ---
 flowchart TD 
-    A[MQTTBROKER.run] --> B(sluit bestaande mqtt broker af) 
-    B --> C(voer mosquitto uit) --> C
+    A[MQTTBROKER.run] --> B(sluit bestaande mqtt broker af) 
+    B --> C(voer mosquitto uit) --> C
 
     D[MQTTCLIENT.run] --> E(maak mqtt client aan) 
     E --> F[connect client met mqtt broker]
@@ -237,7 +237,7 @@ classDiagram
 title: server database.py
 ---
 flowchart TD 
-    A[Database.create_meetingen_table] --> B[maak query] --> C[voer query uit] --> D(maak meetingen tabel aan als deze nog niet bestaat) --> E[return]
+    A[Database.create_meetingen_table] --> B[maak query] --> C[voer query uit] --> D(maak meetingen tabel aan als deze nog niet bestaat) --> E[return]
 
     F[Database.create_kalibreer_table] --> G[maak query] --> H[voer query uit] --> I(maak kalibreer tabel aan als deze nog niet bestaat) --> J[return]
 ```
@@ -334,8 +334,8 @@ flowchart TD
 title: server main.py
 ---
 flowchart TD 
-    A[main] --> B(maak mqtt en webserver threads aan) 
-    B --> C(voer threads uit)
+    A[main] --> B(maak mqtt en webserver threads aan) 
+    B --> C(voer threads uit)
     C(wacht 1 seconde) --> D
     D(voer mqqt client uit) --> D
 ```
