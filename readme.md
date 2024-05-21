@@ -227,7 +227,7 @@ classDiagram
     Database : +insert_kalibratie(self, json)
     Database : +get_readings(self, aantal, sensor_id)
     Database : +get_kalibratie(self, sensor_id)
-    Database : +clear_meeetingen(self)
+    Database : +clear_meetingen(self)
     Database : +clear_kalibratie(self)
     Database : +close_connection(self)
 ```
@@ -266,7 +266,7 @@ flowchart TD
 title: server database.py
 ---
 flowchart TD
-    A[Database.clear_meeetingen] --> B[maak query] --> C[voer query uit] --> D(verwijder sensor_data tabel) --> E[return]
+    A[Database.clear_meetingen] --> B[maak query] --> C[voer query uit] --> D(verwijder sensor_data tabel) --> E[return]
 
     F[Database.clear_kalibratie] --> G[maak query] --> H[voer query uit] --> I(verwijder kalibratie_data tabel) --> J[return]
 ```
@@ -289,7 +289,7 @@ classDiagram
     WebServer : +BaseHTTPRequestHandler handler
 
     WebServer : +do_GET(self)
-    WebServer : +do_meeetingen(self)
+    WebServer : +do_meetingen(self)
     WebServer : +do_kalibratie(self)
     WebServer : +clear(self)
 ```
